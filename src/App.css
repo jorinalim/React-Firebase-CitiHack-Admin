@@ -1,5 +1,25 @@
 .App {
-  text-align: center;
+  text-align: left;
+ 
+}
+
+.table-body { 
+  margin-left: 10%; 
+  margin-right: 10%;
+}
+
+.table-title { 
+  margin-top: 18px; 
+  margin-bottom: 18px;
+}
+
+.addnewcontainer { 
+  float: right;
+  padding-bottom: 24px;
+}
+
+.signin-container { 
+  padding-top: 200px; 
 }
 
 .App-logo {
