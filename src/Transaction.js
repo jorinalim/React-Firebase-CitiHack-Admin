@@ -11,7 +11,7 @@ function Transaction() {
     const [filteredList, setFilteredList] = useState([])
 
     const fetchData = () => {
-        setTrans([]); 
+        setTrans([]);
         db.collection("userVoucher")
             .get()
             .then((querySnapShot) => {
@@ -20,11 +20,23 @@ function Transaction() {
                         doc.data().voucherTypeRef.get().then((snapshot2) => { //snapshot2: get voucher data
                             snapshot2.data().merchant.get().then((snapshot3) => {//snapshot3: get merchant data
                                 doc.data().userRef.get().then((snapshot4) => { //snapshot 4: get user data
-                                    console.log(snapshot4.data())
-                                    var date = doc.data().createdAt.toDate();
-                                    var new_create = { "doc": doc.data(), "voucher": snapshot2.data(), "merchant": snapshot3.data(), "trans_date": date, "user_data": snapshot4.data()};
-            
-                                    setTrans(trans => [...trans, new_create])
+                                    if (doc.data().cashierRef !== null) {
+                                        doc.data().cashierRef.get().then((snapshot5) => { //snapshot 5: get cashier data
+                                            console.log(snapshot4.data())
+                                            var date = doc.data().createdAt.toDate();
+                                            var new_create = { "doc": doc.data(), "voucher": snapshot2.data(), "merchant": snapshot3.data(), "trans_date": date, "user_data": snapshot4.data(), "cashier": snapshot5.data() };
+
+                                            setTrans(trans => [...trans, new_create])
+                                        })
+                                    }
+                                    else {
+                                        console.log(snapshot4.data())
+                                        var date = doc.data().createdAt.toDate();
+                                        var new_create = { "doc": doc.data(), "voucher": snapshot2.data(), "merchant": snapshot3.data(), "trans_date": date, "user_data": snapshot4.data(), "cashier": {"email": ""}};
+
+                                        setTrans(trans => [...trans, new_create])
+                                    }
+
                                 })
                             })
                         })
@@ -38,7 +50,7 @@ function Transaction() {
         setFilteredList([]);
         var filterText = []
         var searchTxt = document.getElementById("search-text").value.toUpperCase();
-        console.log("i am clicked with search txt" + searchTxt + " redemem value " + redeemF  + " trans value " + transDateF);
+        console.log("i am clicked with search txt" + searchTxt + " redemem value " + redeemF + " trans value " + transDateF);
 
         trans.forEach((trans) => {
             if (searchTxt !== "") {
@@ -57,13 +69,13 @@ function Transaction() {
                 filterRedeemState.push(trans);
             }
             else if (redeemF == "purchased_only") {
-                if (trans.newCashierRef == undefined) {
+                if (trans.cashier.email == "") {
                     filterRedeemState.push(trans);
                 }
             }
             else {
                 //redeemed 
-                if (trans.newCashierRef !== undefined) {
+                if (trans.cashier.email !== "") {
                     filterRedeemState.push(trans);
                 }
             }
@@ -194,7 +206,7 @@ function Transaction() {
                     <thead>
                         <tr>
                             <th>User Email</th>
-                            <th>Cashier</th>
+                            <th>Cashier Email</th>
                             <th>Merchant</th>
                             <th>Price</th>
                             <th>Payment Mode</th>
@@ -207,7 +219,7 @@ function Transaction() {
                                 return (
                                     <tr>
                                         <td>{trans.user_data.email}</td>
-                                        <td>{trans.newCashierRef}</td>
+                                        <td>{trans.cashier.email}</td>
                                         <td>{trans.merchant.name}</td>
                                         <td>${trans.voucher.costDollar} | {trans.voucher.costPoints} Points</td>
                                         <td>{trans.doc.paymentType}</td>
@@ -221,7 +233,7 @@ function Transaction() {
                                 return (
                                     <tr>
                                         <td>{trans.user_data.email}</td>
-                                        <td>{trans.newCashierRef}</td>
+                                        <td>{trans.cashier.email}</td>
                                         <td>{trans.merchant.name}</td>
                                         <td>${trans.voucher.costDollar} | {trans.voucher.costPoints} Points</td>
                                         <td>{trans.doc.paymentType}</td>
