@@ -20,7 +20,7 @@ function Transaction() {
                         doc.data().voucherTypeRef.get().then((snapshot2) => { //snapshot2: get voucher data
                             snapshot2.data().merchant.get().then((snapshot3) => {//snapshot3: get merchant data
                                 doc.data().userRef.get().then((snapshot4) => { //snapshot 4: get user data
-                                    if (doc.data().cashierRef !== null) {
+                                    if (doc.data().cashierRef !== null && doc.data().cashierRef !== undefined) {
                                         doc.data().cashierRef.get().then((snapshot5) => { //snapshot 5: get cashier data
                                             console.log(snapshot4.data())
                                             var date = doc.data().createdAt.toDate();
