@@ -10,6 +10,7 @@ function Voucher() {
     const [modalShow, setModalShow] = useState(false);
 
     const fetchData = () => {
+        setVoucher([]);
         db.collection("voucherType")
             .get()
             .then((querySnapShot) => {
@@ -34,6 +35,7 @@ function Voucher() {
 
     const handleSearchClick = () => {
         setFiltered(true);
+        setFilteredList([]);
         var searchTxt = document.getElementById("search-text").value.toUpperCase();
         voucher.forEach((v) => {
             if (searchTxt !== "") {
